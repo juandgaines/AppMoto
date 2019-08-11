@@ -89,6 +89,8 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
             mStopButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+
                     Intent intent = new Intent(DashBoardActivity.this, MotoBackgroundService.class);
                     intent.setAction(MotoBackgroundTasks.ACTION_STOP_SENSORS);
                     startService(intent);

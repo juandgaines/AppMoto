@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activities.trackinggps.TrackingGpsActivity"></activity>
         <activity android:name=".activities.formactivity.FormActivity" />
-        <activity android:name=".activities.dashboardactivity.DashBoardActivity" />
+        <activity android:name=".activities.dashboardactivity.DashBoardActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

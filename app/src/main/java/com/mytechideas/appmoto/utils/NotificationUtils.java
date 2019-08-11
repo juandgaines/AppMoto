@@ -45,7 +45,8 @@ public class NotificationUtils {
                         context.getString(R.string.notification_sending_content)
                 ))
                 .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentIntent(contentintent(context));
+                .setContentIntent(contentintent(context))
+                .setOngoing(true);
 
         if(Build.VERSION.SDK_INT>=  Build.VERSION_CODES.JELLY_BEAN
         && Build.VERSION.SDK_INT<Build.VERSION_CODES.O){
@@ -53,6 +54,11 @@ public class NotificationUtils {
         }
 
         notificationManager.notify(SENDING_DATA_NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    public static  void closeNotification(Context context){
+        NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(SENDING_DATA_NOTIFICATION_ID);
     }
 
 

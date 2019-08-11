@@ -24,7 +24,7 @@ public class MotoBackgroundTasks{
 
         else if (ACTION_STOP_SENSORS.equals(action)){
             Log.d(LOG_TAG, "Detener sensores....");
-
+            NotificationUtils.closeNotification(context);
         }
     }
 
