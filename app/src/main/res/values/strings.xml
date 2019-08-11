@@ -3,7 +3,6 @@
     <string name="sign_out">Sign out</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="basic_data_tab_title">DATOS</string>
     <string name="contacts_tab_title">CONTACTOS</string>
     <string name="next">Siguiente</string>
@@ -15,6 +14,13 @@
     <string name="edittext_brithday_hint">Ingresa fecha de nacimiento</string>
     <string name="gender_text">Tipo de sangre</string>
     <string name="contacts_maximum_text">Seleccione un máximo de tres (3) contactos de emergencia</string>
+    <string name="stop">Detener</string>
+    <string name="start">Iniciar</string>
+    <string name="send_alert">Enviar alerta</string>
+    <string name="notification_channel_sending_name">Notificacion de viajes</string>
+    <string name="notification_sending_title">Viaje en progreso</string>
+    <string name="notification_sending_content">Haz click en el icono para terminar tu viaje.</string>
+    <string name="notification_sending_body">Prueba contenido</string>
 
     <string-array name="blod_array">
         <item>Select</item>

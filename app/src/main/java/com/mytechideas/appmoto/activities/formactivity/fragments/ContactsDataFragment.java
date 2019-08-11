@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.activities.formactivity.adapter.ContactsAdapter;
 import com.mytechideas.appmoto.models.ContactsMoto;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
@@ -35,12 +37,16 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
 
     @BindView(R.id.contacts_recycler)
     RecyclerView recyclerView;
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
 
     private ContactsAdapter contactsAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ContentResolver contentResolver;
     private Cursor cursor;
     private Cursor cursorPhone;
+
+
 
 
     /* */
@@ -90,7 +96,7 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
                 FROM_COLUMNS, TO_IDS,
                 0);
         // Sets the adapter for the ListView
-        recyclerView.setAdapter(cursorAdapter);
+        recyclerView.setAdapter(null);
 
 
         recyclerView.setHasFixedSize(true);
@@ -99,26 +105,30 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        // specify an adapter (see also next example)
-        ArrayList<ContactsMoto> arrayList= new ArrayList<>();
+        /*ArrayList<ContactsMoto> arrayList= new ArrayList<>();
         for (int i=0;i<=12;i++){
             ContactsMoto contactsMoto= new ContactsMoto("Contacto "+i, "314002827"+i);
             arrayList.add(contactsMoto);
-        }
+        }*/
+
+        contactsAdapter = new ContactsAdapter();
+
+        mProgressBar.setVisibility(View.VISIBLE);
 
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-
+                ArrayList<ContactsMoto> contacts =getContacts();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        contactsAdapter.addNewList(contacts);
+                        recyclerView.setAdapter(contactsAdapter);
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                });
             }
         });
-
-
-
-        contactsAdapter = new ContactsAdapter();
-        contactsAdapter.addNewList(arrayList);
-        recyclerView.setAdapter(contactsAdapter);
-
         return view;
 
     }
@@ -142,11 +152,10 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-
     }
 
-    /*public void getContacts(){
+    public ArrayList<ContactsMoto> getContacts(){
+        ArrayList<ContactsMoto> listContacts= new ArrayList<>();
         contentResolver=getContext().getContentResolver();
         cursor=contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
                 null,
@@ -156,36 +165,40 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
 
         if (cursor.moveToFirst()) {
 
-            while (cursor.moveToNext()) {
-
-                Integer id = Integer.parseInt (cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID)));
+            do{
+                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 Integer phoneNumber = Integer.parseInt (cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
 
+                String [] ids={id};
                 if (phoneNumber > 0) {
 
                     cursorPhone = contentResolver.query(
                             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                            null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", id.toString(), null);
+                            null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", ids, null);
 
                     if (cursorPhone.getCount() > 0) {
 
                         while (cursorPhone.moveToNext()) {
-                            val phoneNumValue = cursorPhone.getString(
-                                    cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                            val contactSchedule = ContactSchedule(id, name, phoneNumValue)
-                            listContacts.add(contactSchedule)
+                            String phoneNumValue = cursorPhone.getString(
+                                    cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            ContactsMoto contactSchedule = new ContactsMoto(Integer.parseInt(id), name, phoneNumValue);
+                            listContacts.add(contactSchedule);
 
                         }
 
                     }
                     cursorPhone.close();
                 }
-            }
+
+            }while (cursor.moveToNext());
+
         } else {
             //   toast("No contacts available!")
         }
         cursor.close();
-    }*/
+
+        return listContacts;
+    }
 
 }

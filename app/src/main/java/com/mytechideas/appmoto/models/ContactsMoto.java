@@ -3,6 +3,7 @@ package com.mytechideas.appmoto.models;
 public class ContactsMoto {
 
     private String mName="";
+    private Integer mId=-1;
     private String mPhone="";
     private Boolean selected=false;
 
@@ -10,6 +11,20 @@ public class ContactsMoto {
         mName=name;
         mPhone=phone;
         selected=false;
+    }
+    public ContactsMoto(Integer id , String name, String phone){
+        mId=id;
+        mName=name;
+        mPhone=phone;
+        selected=false;
+    }
+
+    public Integer getmId() {
+        return mId;
+    }
+
+    public void setmId(Integer mId) {
+        this.mId = mId;
     }
 
     public String getmName() {
