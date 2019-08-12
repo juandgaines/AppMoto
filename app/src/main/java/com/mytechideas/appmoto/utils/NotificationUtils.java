@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat;
 
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.activities.dashboardactivity.DashBoardActivity;
+import com.mytechideas.appmoto.services.MotoBackgroundService;
+import com.mytechideas.appmoto.services.MotoBackgroundTasks;
 
 public class NotificationUtils {
 
@@ -23,6 +25,8 @@ public class NotificationUtils {
 
     private static final String SENDING_DATA_NOTIFICATION_CHANNEL_ID="sending_data_notification_channel";
     private static final int SENDING_DATA_NOTIFICATION_ID = 2001;
+
+    private static final int ACTION_STOP_SHARING = 4001;
 
     public static void createNotificationMotoCurrentlySharing(Context context){
 
@@ -46,6 +50,8 @@ public class NotificationUtils {
                 ))
                 .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setContentIntent(contentintent(context))
+                .addAction(stopAction(context))
+                .setProgress(100,0,true)
                 .setOngoing(true);
 
         if(Build.VERSION.SDK_INT>=  Build.VERSION_CODES.JELLY_BEAN
@@ -60,7 +66,6 @@ public class NotificationUtils {
         NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(SENDING_DATA_NOTIFICATION_ID);
     }
-
 
     private static PendingIntent contentintent(Context context){
 
@@ -77,6 +82,25 @@ public class NotificationUtils {
         Resources resources=context.getResources();
         Bitmap largeIcon= BitmapFactory.decodeResource(resources, R.mipmap.ic_motorcycle_black_18dp);
         return  largeIcon;
+    }
+
+    private static NotificationCompat.Action stopAction(Context context){
+        Intent stopSensorSharing =new Intent(context, MotoBackgroundService.class);
+
+        stopSensorSharing.setAction(MotoBackgroundTasks.ACTION_STOP_SENSORS);
+
+        PendingIntent stopSensorSharingPendingIntent= PendingIntent.getService(
+                context,
+                ACTION_STOP_SHARING,
+                stopSensorSharing,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        NotificationCompat.Action stopSharingAction= new NotificationCompat.Action(  R.drawable.ic_baseline_stop_24px,
+                context.getString(R.string.stop),
+                stopSensorSharingPendingIntent);
+
+        return stopSharingAction;
     }
 
 }

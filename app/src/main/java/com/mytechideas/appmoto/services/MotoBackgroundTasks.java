@@ -26,6 +26,7 @@ public class MotoBackgroundTasks {
     public static final String ACTION_SEND_SENSORS="send-sensors-to-server";
     public static final String ACTION_STOP_SENSORS="stop-sensors-to-server";
 
+
     private static CompositeDisposable observablesSensors=new CompositeDisposable();
 
     public static void  executeTasks(Context context, String action){
