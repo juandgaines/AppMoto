@@ -54,9 +54,7 @@ public class MotoBackgroundTasks {
             long id=mDb.tripsDao().insertTrip(entry);
             entry.setId((int)id);
             NotificationUtils.createNotificationMotoCurrentlySharing(context);
-            combineObservablesTest(context);
-            //observablesSensors.add(createObservableForSensorGyroscope(context));
-            //observablesSensors.add(createObservableForSensorAccelerometer(context));
+            observablesSensors.add(combineObservablesTest(context));
         }
 
         else if (ACTION_STOP_SENSORS.equals(action)){
@@ -65,11 +63,8 @@ public class MotoBackgroundTasks {
             entry.setEnd_date(new Date());
             mDb.tripsDao().updateTrip(entry);
             TripEntry finalStateTrip=mDb.tripsDao ().getTripById((int)entry.getId());
-
             List<AccelerometerEntry> accelerometerEntryList= mDb.accDAO().loadAllAccelerometerDataByTripId(entry.getId());
             List<GyroscopeEntry> gyroscopeEntries=mDb.gyroDAO().loadAllGyroscpeDataByTripId(entry.getId());
-
-
             observablesSensors.clear();
             NotificationUtils.closeNotification(context);
 
@@ -79,94 +74,14 @@ public class MotoBackgroundTasks {
         }
     }
 
-    public static Disposable createObservableForSensorGyroscope(Context context){
-
-        Disposable observable = new ReactiveSensors(context).observeSensor(Sensor.TYPE_GYROSCOPE)
-                .subscribeOn(Schedulers.computation())
-                .filter(ReactiveSensorFilter.filterSensorChanged())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ReactiveSensorEvent>() {
-
-                    @Override
-                    public void accept(ReactiveSensorEvent reactiveSensorEvent) throws Exception {
-                        SensorEvent event = reactiveSensorEvent.getSensorEvent();
-
-                        float x = event.values[0];
-                        float y = event.values[1];
-                        float z = event.values[2];
-
-
-                        String message = String.format("Gyroscope: x = %f, y = %f, z = %f", x, y, z);
-
-                        GyroscopeEntry gyroscopeEntry =
-                                new GyroscopeEntry(entry.getId(),new Date().getTime(),x,y,z);
-
-
-                        AppExecutors.getsInstance().diskIO().execute(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mDb.gyroDAO().insertGyroscopeSample(gyroscopeEntry);
-                                    }
-                                }
-                        );
-
-                        Log.d(LOG_TAG, message);
-                    }
-
-                });
-
-        return observable;
-
-    }
-
-    public static Disposable createObservableForSensorAccelerometer(Context context){
-
-        Disposable observable = new ReactiveSensors(context).observeSensor(Sensor.TYPE_ACCELEROMETER)
-                .subscribeOn(Schedulers.computation())
-                .filter(ReactiveSensorFilter.filterSensorChanged())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ReactiveSensorEvent>() {
-
-                    @Override
-                    public void accept(ReactiveSensorEvent reactiveSensorEvent) throws Exception {
-                        SensorEvent event = reactiveSensorEvent.getSensorEvent();
-
-                        float x = event.values[0];
-                        float y = event.values[1];
-                        float z = event.values[2];
-
-                        String message = String.format("Accelerometer: x = %f, y = %f, z = %f", x, y, z);
-
-                        AccelerometerEntry accelerometerEntry=
-                                new AccelerometerEntry(entry.getId(),new Date().getTime(),x,y,z);
-
-
-                        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
-                                                                         @Override
-                                                                         public void run() {
-                                                                             mDb.accDAO().insertAccelerometerSample(accelerometerEntry);
-                                                                         }
-                                                                     }
-                        );
-
-                        Log.d(LOG_TAG, message);
-                    }
-
-                });
-
-        return observable;
-
-    }
-
-    public static void combineObservablesTest(Context context){
+    public static Disposable combineObservablesTest(Context context){
 
         Flowable<ReactiveSensorEvent> observable1 = new ReactiveSensors(context).observeSensor(Sensor.TYPE_ACCELEROMETER,1000)
                 .subscribeOn(Schedulers.computation())
                 .filter(ReactiveSensorFilter.filterSensorChanged())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        Disposable observable2 = new ReactiveSensors(context).observeSensor(Sensor.TYPE_GYROSCOPE)
+        Disposable disposableOperation = new ReactiveSensors(context).observeSensor(Sensor.TYPE_GYROSCOPE,1000)
                 .subscribeOn(Schedulers.computation())
                 .filter(ReactiveSensorFilter.filterSensorChanged())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -220,10 +135,8 @@ public class MotoBackgroundTasks {
                 });
 
 
-
+        return disposableOperation;
     }
-
-
 
 
 }
