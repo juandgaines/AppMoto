@@ -5,6 +5,8 @@ import android.content.Intent;
 
 import androidx.annotation.Nullable;
 
+import static com.mytechideas.appmoto.services.MotoBackgroundTasks.ACTION_STOP_SENSORS;
+
 public class MotoBackgroundService extends IntentService {
 
     public MotoBackgroundService() {
@@ -16,6 +18,9 @@ public class MotoBackgroundService extends IntentService {
 
         String action= intent.getAction();
         MotoBackgroundTasks.executeTasks(this,action);
+        if (action.equals(ACTION_STOP_SENSORS))
+            stopSelf();
+
     }
 
 

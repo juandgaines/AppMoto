@@ -10,6 +10,7 @@ import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
 import com.mytechideas.appmoto.database.converters.DateConverter;
+import com.mytechideas.appmoto.database.daos.AccDAO;
 import com.mytechideas.appmoto.database.daos.TripsDAO;
 import com.mytechideas.appmoto.database.entities.AccelerometerEntry;
 import com.mytechideas.appmoto.database.entities.GyroscopeEntry;
@@ -34,7 +35,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 sInstance= Room.databaseBuilder(context.getApplicationContext(),
                         AppDatabase.class,AppDatabase.DATABASE_NAME)
                         //Remove this line when you made sure the DB is working.
-                        .allowMainThreadQueries()
+                        //.allowMainThreadQueries()
                         .build();
             }
         }
@@ -43,6 +44,7 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract TripsDAO tripsDao();
+    public abstract AccDAO accDAO();
 
 
 

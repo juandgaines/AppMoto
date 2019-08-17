@@ -38,10 +38,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.mytechideas.appmoto.MainActivity;
 import com.mytechideas.appmoto.activities.formactivity.adapter.FormAdapterViewPager;
+import com.mytechideas.appmoto.database.AppDatabase;
+import com.mytechideas.appmoto.database.converters.DateConverter;
+import com.mytechideas.appmoto.database.entities.TripEntry;
 import com.mytechideas.appmoto.preferences.PrefMang;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.services.MotoBackgroundService;
 import com.mytechideas.appmoto.services.MotoBackgroundTasks;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,12 +68,14 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
     Button mStartButton;
     @BindView(R.id.stop)
     Button mStopButton;
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
         ButterKnife.bind(this);
+        mDb= AppDatabase.getsInstance(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -92,6 +99,7 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
             mStartButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     Intent intent = new Intent(DashBoardActivity.this, MotoBackgroundService.class);
                     intent.setAction(MotoBackgroundTasks.ACTION_SEND_SENSORS);
                     startService(intent);
