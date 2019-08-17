@@ -18,7 +18,7 @@ public interface AccDAO {
     @Query("SELECT * FROM accelerometer_data ORDER BY sample_time_acc")
     List<AccelerometerEntry> loadAllAccelerometerData();
 
-    @Query("SELECT * FROM accelerometer_data WHERE trip_id=:id ORDER BY sample_time_acc ASC ")
+    @Query("SELECT * FROM accelerometer_data WHERE trip_id=:id ORDER BY sample_time_acc DESC ")
     List<AccelerometerEntry> loadAllAccelerometerDataByTripId(int id);
 
     @Insert
