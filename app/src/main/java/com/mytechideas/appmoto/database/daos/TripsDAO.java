@@ -35,4 +35,6 @@ public interface TripsDAO {
     @Query("DELETE FROM trips")
     void deleteAllTrips();
 
+
+
 }

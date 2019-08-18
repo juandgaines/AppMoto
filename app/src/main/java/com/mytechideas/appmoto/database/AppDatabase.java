@@ -12,6 +12,7 @@ import androidx.room.TypeConverters;
 import com.mytechideas.appmoto.database.converters.DateConverter;
 import com.mytechideas.appmoto.database.daos.AccDAO;
 import com.mytechideas.appmoto.database.daos.GyroDAO;
+import com.mytechideas.appmoto.database.daos.TripWithAccAndGyroDAO;
 import com.mytechideas.appmoto.database.daos.TripsDAO;
 import com.mytechideas.appmoto.database.entities.AccelerometerEntry;
 import com.mytechideas.appmoto.database.entities.GyroscopeEntry;
@@ -47,6 +48,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TripsDAO tripsDao();
     public abstract AccDAO accDAO();
     public abstract GyroDAO gyroDAO();
+    public abstract TripWithAccAndGyroDAO tripWithAccAndGyroDAO();
 
 
 

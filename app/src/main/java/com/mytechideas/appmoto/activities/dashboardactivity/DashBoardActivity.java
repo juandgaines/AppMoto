@@ -36,17 +36,21 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 import com.mytechideas.appmoto.MainActivity;
 import com.mytechideas.appmoto.activities.formactivity.adapter.FormAdapterViewPager;
 import com.mytechideas.appmoto.database.AppDatabase;
 import com.mytechideas.appmoto.database.converters.DateConverter;
 import com.mytechideas.appmoto.database.entities.TripEntry;
+import com.mytechideas.appmoto.database.entities.TripEntryWithAccAndGyro;
+import com.mytechideas.appmoto.database.executors.AppExecutors;
 import com.mytechideas.appmoto.preferences.PrefMang;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.services.MotoBackgroundService;
 import com.mytechideas.appmoto.services.MotoBackgroundTasks;
 
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -148,9 +152,28 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
             case R.id.send_alert:
                 sendLastLocation();
                 return true;
+
+            case R.id.debug_db:
+                getDataFromDB();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void getDataFromDB() {
+
+        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+                                                         @Override
+                                                         public void run() {
+                                                             List<TripEntryWithAccAndGyro> x = mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
+
+                                                             Gson gson= new Gson();
+                                                             String json= gson.toJson(x);
+
+
+                                                         }
+                                                     }
+        );
     }
 
     private void sendLastLocation() {

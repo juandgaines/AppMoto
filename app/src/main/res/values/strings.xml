@@ -21,6 +21,7 @@
     <string name="notification_sending_title">Viaje en progreso</string>
     <string name="notification_sending_content">Haz click en el icono para terminar tu viaje.</string>
     <string name="notification_sending_body">Prueba contenido</string>
+    <string name="debug_data">Debug</string>
 
     <string-array name="blod_array">
         <item>Select</item>

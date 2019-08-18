@@ -10,16 +10,21 @@ import android.widget.Toast;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorFilter;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
+import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.context.AppMotoContext;
 import com.mytechideas.appmoto.database.AppDatabase;
+import com.mytechideas.appmoto.database.daos.TripWithAccAndGyroDAO;
 import com.mytechideas.appmoto.database.entities.AccelerometerEntry;
 import com.mytechideas.appmoto.database.entities.GyroscopeEntry;
 import com.mytechideas.appmoto.database.entities.TripEntry;
+import com.mytechideas.appmoto.database.entities.TripEntryWithAccAndGyro;
 import com.mytechideas.appmoto.database.executors.AppExecutors;
 import com.mytechideas.appmoto.models.AccAndGyro;
 import com.mytechideas.appmoto.preferences.PrefMang;
 import com.mytechideas.appmoto.utils.NotificationUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +35,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class MotoBackgroundTasks {
@@ -59,31 +65,28 @@ public class MotoBackgroundTasks {
 
         else if (ACTION_STOP_SENSORS.equals(action)){
             Log.d(LOG_TAG, "Detener sensores....");
-
             entry.setEnd_date(new Date());
             mDb.tripsDao().updateTrip(entry);
             TripEntry finalStateTrip=mDb.tripsDao ().getTripById((int)entry.getId());
             List<AccelerometerEntry> accelerometerEntryList= mDb.accDAO().loadAllAccelerometerDataByTripId(entry.getId());
             List<GyroscopeEntry> gyroscopeEntries=mDb.gyroDAO().loadAllGyroscpeDataByTripId(entry.getId());
+            List<TripEntryWithAccAndGyro> mOverAllData= mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
             observablesSensors.clear();
             NotificationUtils.closeNotification(context);
-
-            mDb.tripsDao().deleteAllTrips();
-            mDb.accDAO().deleteAllAccSamples();
-            mDb.gyroDAO().deleteAllGyroSamples();
+            //mDb.tripsDao().deleteAllTrips();
+            //mDb.accDAO().deleteAllAccSamples();
+            //mDb.gyroDAO().deleteAllGyroSamples();
         }
     }
 
     public static Disposable combineObservablesTest(Context context){
 
-        Flowable<ReactiveSensorEvent> observable1 = new ReactiveSensors(context).observeSensor(Sensor.TYPE_ACCELEROMETER,1000)
+        Flowable<ReactiveSensorEvent> observable1 = new ReactiveSensors(context).observeSensor(Sensor.TYPE_ACCELEROMETER)
                 .subscribeOn(Schedulers.computation())
-                .filter(ReactiveSensorFilter.filterSensorChanged())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        Disposable disposableOperation = new ReactiveSensors(context).observeSensor(Sensor.TYPE_GYROSCOPE,1000)
+        Disposable disposableOperation = new ReactiveSensors(context).observeSensor(Sensor.TYPE_GYROSCOPE)
                 .subscribeOn(Schedulers.computation())
-                .filter(ReactiveSensorFilter.filterSensorChanged())
                 .observeOn(AndroidSchedulers.mainThread())
                 .withLatestFrom(observable1, new BiFunction<ReactiveSensorEvent, ReactiveSensorEvent, AccAndGyro>() {
                     @Override
@@ -95,7 +98,6 @@ public class MotoBackgroundTasks {
                                 reactiveGyroEvent.getSensorEvent().values[0],
                                 reactiveGyroEvent.getSensorEvent().values[1],
                                 reactiveGyroEvent.getSensorEvent().values[2]
-
                         );
                     }
                 })
@@ -118,17 +120,9 @@ public class MotoBackgroundTasks {
                                                                          @Override
                                                                          public void run() {
                                                                              mDb.accDAO().insertAccelerometerSample(accelerometerEntry);
+                                                                             mDb.gyroDAO().insertGyroscopeSample(gyroscopeEntry);
                                                                          }
                                                                      }
-                        );
-
-                        AppExecutors.getsInstance().diskIO().execute(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mDb.gyroDAO().insertGyroscopeSample(gyroscopeEntry);
-                                    }
-                                }
                         );
 
                     }
@@ -137,6 +131,4 @@ public class MotoBackgroundTasks {
 
         return disposableOperation;
     }
-
-
 }
