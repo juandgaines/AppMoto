@@ -118,4 +118,17 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     public int getContactsSelected(){
         return mSelectedContacts;
     }
+
+    public  ArrayList<ContactsMoto> getSelectedContacts (){
+
+        ArrayList<ContactsMoto> selected= new ArrayList<>();
+        for ( ContactsMoto i:mDataset ){
+
+            if (i.getSelected()==true){
+                selected.add(i);
+            }
+
+        }
+        return selected;
+    }
 }

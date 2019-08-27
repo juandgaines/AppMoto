@@ -10,6 +10,8 @@ import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.context.AppMotoContext;
 import com.mytechideas.appmoto.models.ContactsMoto;
 
+import java.util.Date;
+
 public class PrefMang {
 
     public static Context context= AppMotoContext.getAppContext();
@@ -43,6 +45,19 @@ public class PrefMang {
         String json = getSharedPreferenceInstance().getString(PrefConsts.USER_SESSION, "");
         GoogleSignInAccount account= gson.fromJson(json, GoogleSignInAccount.class);
         return account;
+    }
+
+    public static void setDateBirthday(Date value ){
+        Gson gson= new Gson();
+        String json= gson.toJson(value);
+        getSharedPreferenceInstance().edit().putString(PrefConsts.USER_BIRTH_DATE_2,json).apply();
+    }
+
+    public static Date getBirthDate(){
+        Gson gson = new Gson();
+        String json = getSharedPreferenceInstance().getString(PrefConsts.USER_BIRTH_DATE_2, "");
+        Date date= gson.fromJson(json, Date.class);
+        return date;
     }
 
     public static void setSession(GoogleSignInAccount value ){

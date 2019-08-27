@@ -101,11 +101,11 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/model"
+        app:layout_constraintBottom_toBottomOf="@+id/reference"
         app:layout_constraintEnd_toEndOf="@+id/blod_spinner"
         app:layout_constraintHorizontal_bias="0.69"
         app:layout_constraintStart_toStartOf="@+id/blod_spinner"
-        app:layout_constraintTop_toTopOf="@+id/marca" />
+        app:layout_constraintTop_toTopOf="@+id/reference" />
 
     <TextView
         android:id="@+id/reference"

@@ -1,10 +1,17 @@
 package com.mytechideas.appmoto.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class ContactsMoto {
 
+    @SerializedName("name")
     private String mName="";
+    @SerializedName("id")
     private Integer mId=-1;
+    @SerializedName("phone")
     private String mPhone="";
+    @Expose(serialize = false,deserialize = false)
     private Boolean selected=false;
 
     public ContactsMoto(String name, String phone){

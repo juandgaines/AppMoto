@@ -10,6 +10,7 @@ public class PrefConsts {
     //User data
     public static final String USER_SESSION = "user";
     public static final String USER_BIRTH_DATE ="user_birth_date";
+    public static final String USER_BIRTH_DATE_2 ="user_birth_date_date";
     public static final  String USER_BLOOD="user_blood_type";
     public static final  String USER_CONTACT1="user_contact_1";
     public static final  String USER_CONTACT2="user_contact_2";

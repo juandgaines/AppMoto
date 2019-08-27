@@ -95,24 +95,11 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
                 null,
                 FROM_COLUMNS, TO_IDS,
                 0);
-        // Sets the adapter for the ListView
         recyclerView.setAdapter(null);
-
-
         recyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-
-        /*ArrayList<ContactsMoto> arrayList= new ArrayList<>();
-        for (int i=0;i<=12;i++){
-            ContactsMoto contactsMoto= new ContactsMoto("Contacto "+i, "314002827"+i);
-            arrayList.add(contactsMoto);
-        }*/
-
         contactsAdapter = new ContactsAdapter();
-
         mProgressBar.setVisibility(View.VISIBLE);
 
         Executors.newSingleThreadExecutor().execute(new Runnable() {
@@ -199,6 +186,10 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
         cursor.close();
 
         return listContacts;
+    }
+
+    public ArrayList<ContactsMoto> getContactSelected(){
+        return contactsAdapter.getSelectedContacts();
     }
 
 }

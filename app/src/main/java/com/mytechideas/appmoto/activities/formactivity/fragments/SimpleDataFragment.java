@@ -21,6 +21,7 @@ import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.preferences.PrefMang;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +35,14 @@ public class SimpleDataFragment extends Fragment implements AdapterView.OnItemSe
     EditText mDateView;
     @BindView(R.id.blod_spinner)
     Spinner mSpinner;
+    @BindView(R.id.editreference)
+    EditText mReference;
+    @BindView(R.id.editmodel)
+    EditText mModel;
+    @BindView(R.id.editplaca)
+    EditText mPlaca;
+    @BindView(R.id.editmarca)
+    EditText mBrand;
 
     private Calendar c;
     private int mYear;
@@ -78,6 +87,8 @@ public class SimpleDataFragment extends Fragment implements AdapterView.OnItemSe
                         mDateView.setText(year +"/"+ (month+1)+"/"+day);
                         PrefMang.setBirthdayDate(year +"/"+ (month+1)+"/"+day);
                         c.set(year,month,day);
+                        Date date=c.getTime();
+                        PrefMang.setDateBirthday(date);
                         mYear=year;
                         edad=Actual-mYear;
 
@@ -106,5 +117,19 @@ public class SimpleDataFragment extends Fragment implements AdapterView.OnItemSe
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+
+    public String getModel(){
+        return mModel.getText().toString();
+    }
+    public String getPlaca(){
+        return mPlaca.getText().toString();
+    }
+    public String getReference(){
+        return mReference.getText().toString();
+    }
+    public String getBrand(){
+       return mBrand.getText().toString();
     }
 }

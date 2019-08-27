@@ -155,8 +155,8 @@ public class MotoBackgroundTasks {
                                 state=STATE_2;
                             }
                         }
-                        else if(state.equals(STATE_2)){
-                            if(Math.abs(loAccReader-lastloAccReader) >7){
+                        else if(state.equals(STATE_2) ){
+                            if(Math.abs(loAccReader-lastloAccReader) >7 && loGyroReader>5){
                                 state=STATE_3;
                             }
                         }
@@ -164,11 +164,7 @@ public class MotoBackgroundTasks {
                             Log.d("emergency","Estallado....");
                             NotificationUtils.createNotificationMotoAccident(context);
                             state="";
-
                         }
-
-
-
                     }
                 });
 

@@ -181,7 +181,6 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                                 // Got last known location. In some rare situations this can be null.
                                 if (location != null) {
                                     mLocation=location;
-
                                     Uri gmmIntentUri = Uri.parse("geo:"+mLocation.getLatitude()+","+mLocation.getLongitude());
                                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                                     mapIntent.setPackage("com.google.android.apps.maps");
