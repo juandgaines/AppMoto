@@ -10,7 +10,6 @@ public class TripEntryWithAccAndGyro {
         @Embedded
         public TripEntry tripEntryntry;
 
-
         @Relation(parentColumn = "id",
                 entityColumn = "trip_id") public List<GyroscopeEntry> gyroList;
 

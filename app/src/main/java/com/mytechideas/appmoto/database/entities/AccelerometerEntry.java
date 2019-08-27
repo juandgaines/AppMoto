@@ -17,25 +17,28 @@ public class AccelerometerEntry {
     private float value_x_acc;
     private float value_y_acc;
     private float value_z_acc;
+    private double value_abs_acc;
 
 
     @Ignore
-    public AccelerometerEntry(int trip_id,long sample_time_acc, float value_x_acc, float value_y_acc, float value_z_acc){
+    public AccelerometerEntry(int trip_id,long sample_time_acc, float value_x_acc, float value_y_acc, float value_z_acc, double value_abs_acc){
         this.trip_id=trip_id;
         this.sample_time_acc =sample_time_acc;
         this.value_x_acc=value_x_acc;
         this.value_y_acc=value_y_acc;
         this.value_z_acc=value_z_acc;
+        this.value_abs_acc=value_abs_acc;
 
     }
 
-    public AccelerometerEntry(int id,int trip_id,long sample_time_acc, float value_x_acc, float value_y_acc, float value_z_acc){
+    public AccelerometerEntry(int id,int trip_id,long sample_time_acc, float value_x_acc, float value_y_acc, float value_z_acc, double value_abs_acc){
         this.id=id;
         this.trip_id=trip_id;
         this.sample_time_acc =sample_time_acc;
         this.value_x_acc=value_x_acc;
         this.value_y_acc=value_y_acc;
         this.value_z_acc=value_z_acc;
+        this.value_abs_acc=value_abs_acc;
 
     }
 
@@ -54,7 +57,6 @@ public class AccelerometerEntry {
     public int getTrip_id() {
         return trip_id;
     }
-
 
     public void setSample_time_acc(long sample_time_acc) {
         this.sample_time_acc = sample_time_acc;
@@ -86,5 +88,13 @@ public class AccelerometerEntry {
 
     public float getValue_z_acc() {
         return value_z_acc;
+    }
+
+    public void setValue_abs_acc(double value_abs_acc) {
+        this.value_abs_acc = value_abs_acc;
+    }
+
+    public double getValue_abs_acc() {
+        return value_abs_acc;
     }
 }

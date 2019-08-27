@@ -22,6 +22,8 @@
     <string name="notification_sending_content">Haz click en el icono para terminar tu viaje.</string>
     <string name="notification_sending_body">Prueba contenido</string>
     <string name="debug_data">Debug</string>
+    <string name="notification_accident_title">Accidente detectado!</string>
+    <string name="notification_accident_content">Reportando accidente a tus contactos. Se enviara ayuda lo m\'as pronto posible.</string>
 
     <string-array name="blod_array">
         <item>Select</item>
