@@ -41,16 +41,27 @@ import io.reactivex.schedulers.Schedulers;
 public class MotoBackgroundTasks {
     public static final String LOG_TAG=MotoBackgroundTasks.class.getSimpleName();
 
+    public static final String STATE_1="state_1";
+    public static final String STATE_2="state_2";
+    public static final String STATE_3="state_3";
+
     public static final String ACTION_SEND_SENSORS="send-sensors-to-server";
     public static final String ACTION_STOP_SENSORS="stop-sensors-to-server";
     public static TripEntry entry=null;
+    public static double lastloGyroReader=0.0;
+
+    public static double lastloAccReader=0.0;
+
+    public static String state=STATE_1;
 
 
     private static CompositeDisposable observablesSensors=new CompositeDisposable();
     private static AppDatabase mDb;
+    private static Context mContext;
 
     public static void  executeTasks(Context context, String action){
 
+        mContext=context;
         mDb= AppDatabase.getsInstance(context);
 
         if (ACTION_SEND_SENSORS.equals(action)){
@@ -83,10 +94,12 @@ public class MotoBackgroundTasks {
 
         Flowable<ReactiveSensorEvent> observable1 = new ReactiveSensors(context).observeSensor(Sensor.TYPE_ACCELEROMETER)
                 .subscribeOn(Schedulers.computation())
+                .filter(ReactiveSensorFilter.filterSensorChanged())
                 .observeOn(AndroidSchedulers.mainThread());
 
         Disposable disposableOperation = new ReactiveSensors(context).observeSensor(Sensor.TYPE_GYROSCOPE)
                 .subscribeOn(Schedulers.computation())
+                .filter(ReactiveSensorFilter.filterSensorChanged())
                 .observeOn(AndroidSchedulers.mainThread())
                 .withLatestFrom(observable1, new BiFunction<ReactiveSensorEvent, ReactiveSensorEvent, AccAndGyro>() {
                     @Override
@@ -106,14 +119,25 @@ public class MotoBackgroundTasks {
                     public void accept(AccAndGyro accAndGyro) throws Exception {
 
 
+                        int sampleid = entry.getId();
+                        long sampleDate = new Date().getTime();
+
+                        double loGyroReader = Math.sqrt(Math.pow(accAndGyro.getGyroX(), 2)
+                                + Math.pow(accAndGyro.getGyroY(), 2)
+                                + Math.pow(accAndGyro.getGyroZ(), 2));
+
                         GyroscopeEntry gyroscopeEntry =
-                                new GyroscopeEntry(entry.getId(),new Date().getTime(),accAndGyro.getGyroX(),accAndGyro.getGyroY(),accAndGyro.getGyroZ());
+                                new GyroscopeEntry(sampleid,sampleDate,accAndGyro.getGyroX(),accAndGyro.getGyroY(),accAndGyro.getGyroZ(),loGyroReader);
 
 
+
+                        double loAccReader = Math.sqrt(Math.pow(accAndGyro.getAccX(), 2)
+                                + Math.pow(accAndGyro.getAccY(), 2)
+                                + Math.pow(accAndGyro.getAccZ(), 2));
 
                         AccelerometerEntry accelerometerEntry=
-                                new AccelerometerEntry(entry.getId(),new Date().getTime(),
-                                        accAndGyro.getAccX(),accAndGyro.getAccY(),accAndGyro.getAccZ());
+                                new AccelerometerEntry(sampleid,sampleDate,
+                                        accAndGyro.getAccX(),accAndGyro.getAccY(),accAndGyro.getAccZ(),loAccReader);
 
 
                         AppExecutors.getsInstance().diskIO().execute(new Runnable() {
@@ -124,6 +148,26 @@ public class MotoBackgroundTasks {
                                                                          }
                                                                      }
                         );
+
+
+                        if(state.equals(STATE_1)){
+                            if(Math.abs(loAccReader-lastloAccReader) >5){
+                                state=STATE_2;
+                            }
+                        }
+                        else if(state.equals(STATE_2)){
+                            if(Math.abs(loAccReader-lastloAccReader) >7){
+                                state=STATE_3;
+                            }
+                        }
+                        else if(state.equals(STATE_3)){
+                            Log.d("emergency","Estallado....");
+                            NotificationUtils.createNotificationMotoAccident(context);
+                            state="";
+
+                        }
+
+
 
                     }
                 });

@@ -165,12 +165,10 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                                                          @Override
                                                          public void run() {
                                                              List<TripEntryWithAccAndGyro> x = mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
-
                                                              Gson gson= new Gson();
                                                              String json= gson.toJson(x);
-
-
                                                          }
+
                                                      }
         );
     }

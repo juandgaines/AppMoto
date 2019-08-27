@@ -18,25 +18,28 @@ public class GyroscopeEntry {
     private Float value_x_gyro;
     private Float value_y_gyro;
     private Float value_z_gyro;
+    private Double value_abs_gyro;
 
 
     @Ignore
-    public GyroscopeEntry(int trip_id,Long sample_time_gyro, Float value_x_gyro, Float value_y_gyro, Float value_z_gyro){
+    public GyroscopeEntry(int trip_id,Long sample_time_gyro, Float value_x_gyro, Float value_y_gyro, Float value_z_gyro,Double value_abs_gyro){
         this.trip_id=trip_id;
         this.sample_time_gyro =sample_time_gyro;
         this.value_x_gyro=value_x_gyro;
         this.value_y_gyro=value_y_gyro;
         this.value_z_gyro=value_z_gyro;
+        this.value_abs_gyro=value_abs_gyro;
 
     }
 
-    public GyroscopeEntry(int id,int trip_id,Long sample_time_gyro, Float value_x_gyro, Float value_y_gyro, Float value_z_gyro){
+    public GyroscopeEntry(int id,int trip_id,Long sample_time_gyro, Float value_x_gyro, Float value_y_gyro, Float value_z_gyro,Double value_abs_gyro){
         this.id=id;
         this.trip_id=trip_id;
         this.sample_time_gyro =sample_time_gyro;
         this.value_x_gyro=value_x_gyro;
         this.value_y_gyro=value_y_gyro;
         this.value_z_gyro=value_z_gyro;
+        this.value_abs_gyro=value_abs_gyro;
 
     }
 
@@ -86,5 +89,13 @@ public class GyroscopeEntry {
 
     public Float getValue_z_gyro() {
         return value_z_gyro;
+    }
+
+    public void setValue_abs_gyro(Double value_abs_gyro) {
+        this.value_abs_gyro = value_abs_gyro;
+    }
+
+    public Double getValue_abs_gyro() {
+        return value_abs_gyro;
     }
 }
