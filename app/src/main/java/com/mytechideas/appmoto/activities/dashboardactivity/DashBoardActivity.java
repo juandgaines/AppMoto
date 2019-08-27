@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -70,9 +71,9 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
 
     @BindView(R.id.start)
     Button mStartButton;
-    @BindView(R.id.stop)
-    Button mStopButton;
     private AppDatabase mDb;
+
+    private boolean state=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,20 +105,19 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                 @Override
                 public void onClick(View view) {
 
-                    Intent intent = new Intent(DashBoardActivity.this, MotoBackgroundService.class);
-                    intent.setAction(MotoBackgroundTasks.ACTION_SEND_SENSORS);
-                    startService(intent);
-                }
-            });
-
-            mStopButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-
-                    Intent intent = new Intent(DashBoardActivity.this, MotoBackgroundService.class);
-                    intent.setAction(MotoBackgroundTasks.ACTION_STOP_SENSORS);
-                    startService(intent);
+                    if (state==false) {
+                        state=true;
+                        mStartButton.setText("Detener");
+                        Intent intent = new Intent(DashBoardActivity.this, MotoBackgroundService.class);
+                        intent.setAction(MotoBackgroundTasks.ACTION_SEND_SENSORS);
+                        startService(intent);
+                    }else{
+                        state=false;
+                        mStartButton.setText("Iniciar");
+                        Intent intent = new Intent(DashBoardActivity.this, MotoBackgroundService.class);
+                        intent.setAction(MotoBackgroundTasks.ACTION_STOP_SENSORS);
+                        startService(intent);
+                    }
                 }
             });
             //SharedPreferences sp= PreferenceManager.getDefaultSharedPreferences(this);
@@ -152,7 +152,6 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
             case R.id.send_alert:
                 sendLastLocation();
                 return true;
-
             case R.id.debug_db:
                 getDataFromDB();
             default:
@@ -184,6 +183,13 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                                 // Got last known location. In some rare situations this can be null.
                                 if (location != null) {
                                     mLocation=location;
+
+                                    Uri gmmIntentUri = Uri.parse("geo:"+mLocation.getLatitude()+","+mLocation.getLongitude());
+                                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                    mapIntent.setPackage("com.google.android.apps.maps");
+                                    if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                                        startActivity(mapIntent);
+                                    }
                                 }
                             }
                         });

@@ -86,4 +86,88 @@
         app:layout_constraintStart_toEndOf="@+id/blod_label"
         app:layout_constraintTop_toTopOf="@+id/blod_label" />
 
+    <TextView
+        android:id="@+id/marca"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/marca"
+        app:layout_constraintStart_toStartOf="@+id/date_label"
+        app:layout_constraintTop_toBottomOf="@+id/blod_label" />
+
+    <EditText
+        android:id="@+id/editmarca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/model"
+        app:layout_constraintEnd_toEndOf="@+id/blod_spinner"
+        app:layout_constraintHorizontal_bias="0.69"
+        app:layout_constraintStart_toStartOf="@+id/blod_spinner"
+        app:layout_constraintTop_toTopOf="@+id/marca" />
+
+    <TextView
+        android:id="@+id/reference"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/reference"
+        app:layout_constraintStart_toStartOf="@+id/date_label"
+        app:layout_constraintTop_toBottomOf="@+id/marca" />
+
+    <EditText
+        android:id="@+id/editreference"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/marca"
+        app:layout_constraintEnd_toEndOf="@+id/blod_spinner"
+        app:layout_constraintHorizontal_bias="0.69"
+        app:layout_constraintStart_toStartOf="@+id/blod_spinner"
+        app:layout_constraintTop_toTopOf="@+id/marca" />
+
+    <TextView
+        android:id="@+id/model"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/model"
+        app:layout_constraintStart_toStartOf="@+id/date_label"
+        app:layout_constraintTop_toBottomOf="@+id/reference" />
+
+    <EditText
+        android:id="@+id/editmodel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/model"
+        app:layout_constraintEnd_toEndOf="@+id/blod_spinner"
+        app:layout_constraintHorizontal_bias="0.69"
+        app:layout_constraintStart_toStartOf="@+id/blod_spinner"
+        app:layout_constraintTop_toTopOf="@+id/model" />
+
+    <TextView
+        android:id="@+id/placa"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/placa"
+        app:layout_constraintStart_toStartOf="@+id/date_label"
+        app:layout_constraintTop_toBottomOf="@+id/model" />
+
+    <EditText
+        android:id="@+id/editplaca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/placa"
+        app:layout_constraintEnd_toEndOf="@+id/blod_spinner"
+        app:layout_constraintHorizontal_bias="0.69"
+        app:layout_constraintStart_toStartOf="@+id/blod_spinner"
+        app:layout_constraintTop_toTopOf="@+id/placa" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

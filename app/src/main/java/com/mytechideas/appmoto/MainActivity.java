@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ButterKnife.bind(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes( new Scope("https://www.googleapis.com/auth/user.birthday.read"))
                 .requestProfile()
                 .requestEmail()
                 .requestId()

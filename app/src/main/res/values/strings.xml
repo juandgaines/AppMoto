@@ -22,6 +22,10 @@
     <string name="notification_sending_content">Haz click en el icono para terminar tu viaje.</string>
     <string name="notification_sending_body">Prueba contenido</string>
     <string name="debug_data">Debug</string>
+    <string name="marca">Marca</string>
+    <string name="reference">Referencia</string>
+    <string name="model">Modelo</string>
+    <string name="placa">Placa</string>
 
     <string-array name="blod_array">
         <item>Select</item>
