@@ -45,6 +45,7 @@ import com.mytechideas.appmoto.database.converters.DateConverter;
 import com.mytechideas.appmoto.database.entities.TripEntry;
 import com.mytechideas.appmoto.database.entities.TripEntryWithAccAndGyro;
 import com.mytechideas.appmoto.database.executors.AppExecutors;
+import com.mytechideas.appmoto.models.LastLocationKnown;
 import com.mytechideas.appmoto.preferences.PrefMang;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.services.MotoBackgroundService;
@@ -181,6 +182,14 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                                 // Got last known location. In some rare situations this can be null.
                                 if (location != null) {
                                     mLocation=location;
+
+                                    LastLocationKnown lastLocationKnown=new LastLocationKnown(
+                                            PrefMang.getSession().getId(),null
+                                            ,mLocation.getLatitude(),mLocation.getLongitude());
+
+                                    Gson gson=new Gson();
+                                    String json= gson.toJson(lastLocationKnown);
+
                                     Uri gmmIntentUri = Uri.parse("geo:"+mLocation.getLatitude()+","+mLocation.getLongitude());
                                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                                     mapIntent.setPackage("com.google.android.apps.maps");

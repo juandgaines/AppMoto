@@ -2,14 +2,21 @@ package com.mytechideas.appmoto.services;
 
 import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensorFilter;
 import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.context.AppMotoContext;
 import com.mytechideas.appmoto.database.AppDatabase;
@@ -20,6 +27,7 @@ import com.mytechideas.appmoto.database.entities.TripEntry;
 import com.mytechideas.appmoto.database.entities.TripEntryWithAccAndGyro;
 import com.mytechideas.appmoto.database.executors.AppExecutors;
 import com.mytechideas.appmoto.models.AccAndGyro;
+import com.mytechideas.appmoto.models.LastLocationKnown;
 import com.mytechideas.appmoto.preferences.PrefMang;
 import com.mytechideas.appmoto.utils.NotificationUtils;
 
@@ -59,10 +67,14 @@ public class MotoBackgroundTasks {
     private static AppDatabase mDb;
     private static Context mContext;
 
+    private static FusedLocationProviderClient fusedLocationClient;
+    private static Location mLocation;
+
     public static void  executeTasks(Context context, String action){
 
         mContext=context;
         mDb= AppDatabase.getsInstance(context);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
 
         if (ACTION_SEND_SENSORS.equals(action)){
             Log.d(LOG_TAG, "Enviando sensores....");
@@ -163,7 +175,25 @@ public class MotoBackgroundTasks {
                         else if(state.equals(STATE_3)){
                             Log.d("emergency","Estallado....");
                             NotificationUtils.createNotificationMotoAccident(context);
+                            fusedLocationClient.getLastLocation()
+                                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                                        @Override
+                                        public void onSuccess(Location location) {
+                                            // Got last known location. In some rare situations this can be null.
+                                            if (location != null) {
+                                                mLocation=location;
+
+                                                LastLocationKnown lastLocationKnown=new LastLocationKnown(
+                                                        PrefMang.getSession().getId(),sampleid
+                                                        ,mLocation.getLatitude(),mLocation.getLongitude());
+
+                                                Gson gson=new Gson();
+                                                String json= gson.toJson(lastLocationKnown);
+                                            }
+                                        }
+                                    });
                             state="";
+
                         }
                     }
                 });
