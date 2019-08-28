@@ -156,7 +156,7 @@ public class MotoBackgroundTasks {
                             }
                         }
                         else if(state.equals(STATE_2) ){
-                            if(Math.abs(loAccReader-lastloAccReader) >7 && loGyroReader>5){
+                            if(Math.abs(loAccReader-lastloAccReader) >10 && loGyroReader>10){
                                 state=STATE_3;
                             }
                         }
