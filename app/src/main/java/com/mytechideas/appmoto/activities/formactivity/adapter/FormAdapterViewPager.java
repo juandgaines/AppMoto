@@ -1,15 +1,12 @@
 package com.mytechideas.appmoto.activities.formactivity.adapter;
 
 import android.content.Context;
-import android.view.View;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.gson.Gson;
 import com.mytechideas.appmoto.R;
@@ -19,10 +16,14 @@ import com.mytechideas.appmoto.context.AppMotoContext;
 import com.mytechideas.appmoto.models.ContactsMoto;
 import com.mytechideas.appmoto.models.FavoriteContactsUser;
 import com.mytechideas.appmoto.models.RegisterUser;
+import com.mytechideas.appmoto.network.AppMotoRetrofitinstance;
 import com.mytechideas.appmoto.preferences.PrefMang;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FormAdapterViewPager extends FragmentPagerAdapter {
 
@@ -81,6 +82,24 @@ public class FormAdapterViewPager extends FragmentPagerAdapter {
         FavoriteContactsUser favoriteContactsUser= new FavoriteContactsUser( PrefMang.getSession().getId(),contactsMotos);
         Gson gson= new Gson();
         String json= gson.toJson(favoriteContactsUser);
+
+        if(!contactsMotos.isEmpty()){
+            PrefMang.setContacts(favoriteContactsUser);
+            AppMotoRetrofitinstance.getAppMotoService().sendAlertToContacts(favoriteContactsUser).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    Toast.makeText(context, context.getText(R.string.registered_contacts_successfull), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(context, context.getText(R.string.registered_contacts_failed), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        else{
+            //TODO logic for message indicating that you should add the contacts later.
+        }
         return true;
     }
 
@@ -97,7 +116,22 @@ public class FormAdapterViewPager extends FragmentPagerAdapter {
             Gson gson= new Gson();
             String json= gson.toJson(registerUser);
 
+            AppMotoRetrofitinstance.getAppMotoService().registerUser( registerUser).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    Response<Void> r = response;
+                    Toast.makeText(context, context.getText(R.string.register_successfull), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(context, context.getText(R.string.register_failed), Toast.LENGTH_LONG).show();
+                }
+            });
+
             return true;
+
+
         }
     }
 }

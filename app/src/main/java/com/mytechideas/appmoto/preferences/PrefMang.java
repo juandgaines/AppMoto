@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.context.AppMotoContext;
 import com.mytechideas.appmoto.models.ContactsMoto;
+import com.mytechideas.appmoto.models.FavoriteContactsUser;
 
 import java.util.Date;
 
@@ -162,6 +163,28 @@ public class PrefMang {
         ContactsMoto contact= gson.fromJson(json, ContactsMoto.class);
 
         return contact;
+    }
+
+    public static void setContacts(FavoriteContactsUser favoriteContactsUser){
+
+        Gson gson= new Gson();
+
+        String json= "";
+        if (favoriteContactsUser!=null){
+            json=gson.toJson(favoriteContactsUser);
+
+            getSharedPreferenceInstance().edit().putString(PrefConsts.USER_CONTACTS_LIST, json).apply();
+        }
+    }
+
+    public static  FavoriteContactsUser getContacts(){
+
+        Gson gson= new Gson();
+        String json= "";
+        json=getSharedPreferenceInstance().getString(PrefConsts.USER_CONTACTS_LIST, "");
+        FavoriteContactsUser contacts= gson.fromJson(json, FavoriteContactsUser.class);
+
+        return contacts;
     }
 
 

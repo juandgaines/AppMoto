@@ -28,6 +28,10 @@
     <string name="reference">Referencia</string>
     <string name="model">Modelo</string>
     <string name="placa">Placa</string>
+    <string name="register_failed">Registro fallido...</string>
+    <string name="register_successfull">Registro exitoso</string>
+    <string name="registered_contacts_successfull">Contactos registrados exitosamente!</string>
+    <string name="registered_contacts_failed">Fallo en registro de contactos</string>
 
     <string-array name="blod_array">
         <item>Select</item>

@@ -6,18 +6,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,9 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.github.pwittchen.reactivesensors.library.ReactiveSensorEvent;
-import com.github.pwittchen.reactivesensors.library.ReactiveSensorFilter;
-import com.github.pwittchen.reactivesensors.library.ReactiveSensors;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -39,27 +31,25 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.mytechideas.appmoto.MainActivity;
-import com.mytechideas.appmoto.activities.formactivity.adapter.FormAdapterViewPager;
 import com.mytechideas.appmoto.database.AppDatabase;
-import com.mytechideas.appmoto.database.converters.DateConverter;
-import com.mytechideas.appmoto.database.entities.TripEntry;
 import com.mytechideas.appmoto.database.entities.TripEntryWithAccAndGyro;
 import com.mytechideas.appmoto.database.executors.AppExecutors;
+import com.mytechideas.appmoto.models.AccidentReport;
+import com.mytechideas.appmoto.models.FavoriteContactsUser;
 import com.mytechideas.appmoto.models.LastLocationKnown;
+import com.mytechideas.appmoto.network.AppMotoRetrofitinstance;
 import com.mytechideas.appmoto.preferences.PrefMang;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.services.MotoBackgroundService;
 import com.mytechideas.appmoto.services.MotoBackgroundTasks;
 
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DashBoardActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -162,16 +152,31 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
 
     private void getDataFromDB() {
 
-        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
-                                                         @Override
-                                                         public void run() {
-                                                             List<TripEntryWithAccAndGyro> x = mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
-                                                             Gson gson= new Gson();
-                                                             String json= gson.toJson(x);
-                                                         }
+        AppExecutors
+                .getsInstance()
+                .diskIO()
+                .execute(new Runnable() {
+                             @Override
+                             public void run() {
+                                 List<TripEntryWithAccAndGyro> x = mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
+                                 Gson gson= new Gson();
+                                 String json= gson.toJson(x);
 
-                                                     }
-        );
+                                 AppMotoRetrofitinstance.getAppMotoService().registerTrip(x).enqueue(new Callback<Void>() {
+                                     @Override
+                                     public void onResponse(Call<Void> call, Response<Void> response) {
+                                         Toast.makeText(DashBoardActivity.this, "Viaje subido exitosamente", Toast.LENGTH_LONG).show();
+                                     }
+
+                                     @Override
+                                     public void onFailure(Call<Void> call, Throwable t) {
+                                         Toast.makeText(DashBoardActivity.this, "Algo fallo subiendo la informacion del viaje", Toast.LENGTH_LONG).show();
+                                     }
+                                 });
+                             }
+
+                         }
+                );
     }
 
     private void sendLastLocation() {
@@ -187,8 +192,11 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                                             PrefMang.getSession().getId(),null
                                             ,mLocation.getLatitude(),mLocation.getLongitude());
 
+                                    FavoriteContactsUser contactForEmergency = PrefMang.getContacts();
+                                    AccidentReport accidentReport = new AccidentReport(lastLocationKnown,contactForEmergency);
+
                                     Gson gson=new Gson();
-                                    String json= gson.toJson(lastLocationKnown);
+                                    String json= gson.toJson(accidentReport);
 
                                     Uri gmmIntentUri = Uri.parse("geo:"+mLocation.getLatitude()+","+mLocation.getLongitude());
                                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
