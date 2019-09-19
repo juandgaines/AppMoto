@@ -67,7 +67,6 @@ public class PrefMang {
         getSharedPreferenceInstance().edit().putString(PrefConsts.USER_SESSION,json).apply();
     }
 
-
     public static Boolean getTest(){
 
         return getSharedPreferenceInstance().getBoolean(PrefConsts.TEST_SERVICE,true);
@@ -82,7 +81,6 @@ public class PrefMang {
             getSharedPreferenceInstance().edit().putBoolean(PrefConsts.TEST_SERVICE,true).apply();
         }
     }
-
 
     public static void setBirthdayDate(String s) {
         getSharedPreferenceInstance().edit().putString(PrefConsts.USER_BIRTH_DATE,s).apply();
@@ -187,7 +185,6 @@ public class PrefMang {
         return contacts;
     }
 
-
     public static int getSpotOfContact(ContactsMoto contactsMoto) {
 
         int position=PrefConsts.NO_POSITION;
@@ -201,4 +198,37 @@ public class PrefMang {
         }
         return position;
     }
+
+    public static void setBrandMoto(String brand) {
+        getSharedPreferenceInstance().edit().putString(PrefConsts.USER_MOTO_BRAND,brand).apply();
+    }
+
+    public static void setReferenceMoto(String reference) {
+        getSharedPreferenceInstance().edit().putString(PrefConsts.USER_MOTO_REFERENCE,reference).apply();
+    }
+
+    public static void setPlacaMoto(String placa) {
+        getSharedPreferenceInstance().edit().putString(PrefConsts.USER_MOTO_PLACA,placa).apply();
+    }
+
+    public static void setModelMoto(String model) {
+        getSharedPreferenceInstance().edit().putString(PrefConsts.USER_MOTO_MODEL,model).apply();
+    }
+
+    public static String getBrandMoto() {
+        return getSharedPreferenceInstance().getString(PrefConsts.USER_MOTO_BRAND,"");
+    }
+
+    public static String getReferenceMoto() {
+        return getSharedPreferenceInstance().getString(PrefConsts.USER_MOTO_REFERENCE,"");
+    }
+
+    public static String getPlacaMoto() {
+        return getSharedPreferenceInstance().getString(PrefConsts.USER_MOTO_PLACA,"");
+    }
+
+    public static String getModelMoto() {
+        return getSharedPreferenceInstance().getString(PrefConsts.USER_MOTO_MODEL,"");
+    }
+
 }

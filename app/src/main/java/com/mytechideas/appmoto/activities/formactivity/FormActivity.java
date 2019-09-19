@@ -4,29 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
-import com.mytechideas.appmoto.MainActivity;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.activities.dashboardactivity.DashBoardActivity;
 import com.mytechideas.appmoto.activities.formactivity.adapter.FormAdapterViewPager;
-import com.mytechideas.appmoto.preferences.PrefMang;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.internal.Util;
 
 public class FormActivity extends AppCompatActivity {
 
@@ -43,12 +37,19 @@ public class FormActivity extends AppCompatActivity {
     private FormAdapterViewPager pagerAdapter;
 
     private  int mCurrentPage=0;
+    private  String mode;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
         ButterKnife.bind(this);
+
+        Intent intent=getIntent();
+        if (intent!=null && intent.hasExtra("mode"))
+            mode=intent.getStringExtra("mode");
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -57,7 +58,7 @@ public class FormActivity extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         }
         else{
-            pagerAdapter =new FormAdapterViewPager(getSupportFragmentManager());
+            pagerAdapter =new FormAdapterViewPager(getSupportFragmentManager(),mode);
             viewPager.setAdapter(pagerAdapter);
             tabLayout.setupWithViewPager(viewPager);
 
@@ -185,7 +186,7 @@ public class FormActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    pagerAdapter =new FormAdapterViewPager(getSupportFragmentManager());
+                    pagerAdapter =new FormAdapterViewPager(getSupportFragmentManager(), mode);
                     viewPager.setAdapter(pagerAdapter);
                     tabLayout.setupWithViewPager(viewPager);
 

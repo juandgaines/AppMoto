@@ -22,4 +22,8 @@ public class PrefConsts {
 
     public static final int NO_POSITION =-1 ;
     public static final String USER_CONTACTS_LIST = "user_contact_list";
+    public static final String USER_MOTO_BRAND ="brand";
+    public static final String USER_MOTO_REFERENCE ="reference";
+    public static final String USER_MOTO_PLACA = "placa";
+    public static final String USER_MOTO_MODEL = "model";
 }

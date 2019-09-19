@@ -4,6 +4,8 @@
         android:title="@string/send_alert" />
     <item android:id="@+id/debug_db"
         android:title="@string/debug_data" />
+    <item android:id="@+id/edit_data"
+        android:title="@string/edit_profile" />
     <item android:id="@+id/sign_out"
         android:title="@string/sign_out" />
 </menu>

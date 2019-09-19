@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.mytechideas.appmoto.MainActivity;
+import com.mytechideas.appmoto.activities.formactivity.FormActivity;
 import com.mytechideas.appmoto.database.AppDatabase;
 import com.mytechideas.appmoto.database.entities.TripEntryWithAccAndGyro;
 import com.mytechideas.appmoto.database.executors.AppExecutors;
@@ -142,6 +143,11 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                 return true;
             case R.id.send_alert:
                 sendLastLocation();
+                return true;
+            case R.id.edit_data:
+                Intent intent= new Intent(this, FormActivity.class);
+                intent.putExtra("mode","edition");
+                startActivity(intent);
                 return true;
             case R.id.debug_db:
                 getDataFromDB();

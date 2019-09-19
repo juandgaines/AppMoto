@@ -29,13 +29,18 @@ public class FormAdapterViewPager extends FragmentPagerAdapter {
 
 
     private Context context= AppMotoContext.getAppContext();
+    private String mode;
+    SimpleDataFragment simpleDataFragment;
+    ContactsDataFragment contactsDataFragment;
 
-    SimpleDataFragment simpleDataFragment=new SimpleDataFragment();
-    ContactsDataFragment contactsDataFragment=new ContactsDataFragment();
 
-
-    public FormAdapterViewPager(FragmentManager fm) {
+    public FormAdapterViewPager(FragmentManager fm, String mode) {
         super(fm);
+        this.mode=mode;
+        simpleDataFragment=new SimpleDataFragment();
+        contactsDataFragment=new ContactsDataFragment();
+
+        simpleDataFragment.setMode(mode);
 
     }
 
@@ -113,8 +118,11 @@ public class FormAdapterViewPager extends FragmentPagerAdapter {
         else {
             RegisterUser registerUser= new RegisterUser(PrefMang.getSession().getId(),PrefMang.getBirthDate(),PrefMang.getBlodType(),
                     simpleDataFragment.getBrand(), simpleDataFragment.getReference(), simpleDataFragment.getModel(), simpleDataFragment.getPlaca());
-            Gson gson= new Gson();
-            String json= gson.toJson(registerUser);
+
+            PrefMang.setBrandMoto(registerUser.getBrand());
+            PrefMang.setReferenceMoto(registerUser.getReference());
+            PrefMang.setPlacaMoto(registerUser.getPlaca());
+            PrefMang.setModelMoto(registerUser.getModel());
 
             AppMotoRetrofitinstance.getAppMotoService().registerUser( registerUser).enqueue(new Callback<Void>() {
                 @Override
