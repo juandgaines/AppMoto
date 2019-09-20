@@ -40,7 +40,7 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
     @BindView(R.id.progress_bar)
     ProgressBar mProgressBar;
 
-    private ContactsAdapter contactsAdapter;
+    private ContactsAdapter contactsAdapter = new ContactsAdapter();
     private RecyclerView.LayoutManager layoutManager;
     private ContentResolver contentResolver;
     private Cursor cursor;
@@ -99,7 +99,6 @@ public class ContactsDataFragment extends Fragment implements LoaderManager.Load
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        contactsAdapter = new ContactsAdapter();
         mProgressBar.setVisibility(View.VISIBLE);
 
         Executors.newSingleThreadExecutor().execute(new Runnable() {

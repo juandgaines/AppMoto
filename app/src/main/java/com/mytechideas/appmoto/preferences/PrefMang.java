@@ -2,15 +2,25 @@ package com.mytechideas.appmoto.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.context.AppMotoContext;
 import com.mytechideas.appmoto.models.ContactsMoto;
 import com.mytechideas.appmoto.models.FavoriteContactsUser;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 
 public class PrefMang {
@@ -42,7 +52,9 @@ public class PrefMang {
     }
 
     public static GoogleSignInAccount getSession(){
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Uri.class, new UriDeserializer())
+                .create();
         String json = getSharedPreferenceInstance().getString(PrefConsts.USER_SESSION, "");
         GoogleSignInAccount account= gson.fromJson(json, GoogleSignInAccount.class);
         return account;
@@ -62,8 +74,10 @@ public class PrefMang {
     }
 
     public static void setSession(GoogleSignInAccount value ){
-        Gson gson= new Gson();
-        String json= gson.toJson(value);
+
+        Gson gson1=new GsonBuilder().registerTypeAdapter(Uri.class, new  UriSerializer()).create();
+        //Gson gson= new Gson();
+        String json= gson1.toJson(value);
         getSharedPreferenceInstance().edit().putString(PrefConsts.USER_SESSION,json).apply();
     }
 
@@ -231,4 +245,21 @@ public class PrefMang {
         return getSharedPreferenceInstance().getString(PrefConsts.USER_MOTO_MODEL,"");
     }
 
+
+
+
+}
+
+class UriSerializer implements JsonSerializer<Uri> {
+    public JsonElement serialize(Uri src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JsonPrimitive(src.toString());
+    }
+}
+
+class UriDeserializer implements JsonDeserializer<Uri> {
+    @Override
+    public Uri deserialize(final JsonElement src, final Type srcType,
+                           final JsonDeserializationContext context) throws JsonParseException {
+        return Uri.parse(src.getAsString());
+    }
 }

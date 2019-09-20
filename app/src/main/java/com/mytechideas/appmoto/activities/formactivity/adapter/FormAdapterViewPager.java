@@ -38,9 +38,8 @@ public class FormAdapterViewPager extends FragmentPagerAdapter {
         super(fm);
         this.mode=mode;
         simpleDataFragment=new SimpleDataFragment();
-        contactsDataFragment=new ContactsDataFragment();
-
         simpleDataFragment.setMode(mode);
+        contactsDataFragment=new ContactsDataFragment();
 
     }
 
@@ -55,7 +54,7 @@ public class FormAdapterViewPager extends FragmentPagerAdapter {
             case 0:
                 return simpleDataFragment;
             case 1:
-                return contactsDataFragment;
+                return  contactsDataFragment;
 
                 default: return null;
 
@@ -83,7 +82,10 @@ public class FormAdapterViewPager extends FragmentPagerAdapter {
     }
 
     public Boolean validateContacts(){
-        ArrayList<ContactsMoto>contactsMotos= contactsDataFragment.getContactSelected();
+
+        ArrayList<ContactsMoto> contactsMotos= new ArrayList<>();
+        contactsMotos.addAll(contactsDataFragment.getContactSelected());
+
         FavoriteContactsUser favoriteContactsUser= new FavoriteContactsUser( PrefMang.getSession().getId(),contactsMotos);
         Gson gson= new Gson();
         String json= gson.toJson(favoriteContactsUser);
