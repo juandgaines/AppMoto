@@ -80,22 +80,36 @@ public class MotoBackgroundTasks {
             Log.d(LOG_TAG, "Enviando sensores....");
             Date mStartTripDate= new Date();
             entry=new TripEntry(0,mStartTripDate,null);
-            long id=mDb.tripsDao().insertTrip(entry);
-            entry.setId((int)id);
-            NotificationUtils.createNotificationMotoCurrentlySharing(context);
-            observablesSensors.add(combineObservablesTest(context));
+
+            AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    long id=mDb.tripsDao().insertTrip(entry);
+                    entry.setId((int)id);
+                    NotificationUtils.createNotificationMotoCurrentlySharing(context);
+                    observablesSensors.add(combineObservablesTest(context));
+                }
+            });
+
         }
 
         else if (ACTION_STOP_SENSORS.equals(action)){
             Log.d(LOG_TAG, "Detener sensores....");
-            entry.setEnd_date(new Date());
-            mDb.tripsDao().updateTrip(entry);
-            TripEntry finalStateTrip=mDb.tripsDao ().getTripById((int)entry.getId());
-            List<AccelerometerEntry> accelerometerEntryList= mDb.accDAO().loadAllAccelerometerDataByTripId(entry.getId());
-            List<GyroscopeEntry> gyroscopeEntries=mDb.gyroDAO().loadAllGyroscpeDataByTripId(entry.getId());
-            List<TripEntryWithAccAndGyro> mOverAllData= mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
-            observablesSensors.clear();
-            NotificationUtils.closeNotification(context);
+
+            AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    entry.setEnd_date(new Date());
+                    mDb.tripsDao().updateTrip(entry);
+                    TripEntry finalStateTrip=mDb.tripsDao ().getTripById((int)entry.getId());
+                    List<AccelerometerEntry> accelerometerEntryList= mDb.accDAO().loadAllAccelerometerDataByTripId(entry.getId());
+                    List<GyroscopeEntry> gyroscopeEntries=mDb.gyroDAO().loadAllGyroscpeDataByTripId(entry.getId());
+                    List<TripEntryWithAccAndGyro> mOverAllData= mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
+                    observablesSensors.clear();
+                    NotificationUtils.closeNotification(context);
+                }
+            });
+
             //mDb.tripsDao().deleteAllTrips();
             //mDb.accDAO().deleteAllAccSamples();
             //mDb.gyroDAO().deleteAllGyroSamples();

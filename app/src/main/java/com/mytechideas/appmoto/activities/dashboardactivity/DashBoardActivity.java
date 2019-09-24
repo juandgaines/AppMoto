@@ -6,12 +6,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,6 +58,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.mytechideas.appmoto.services.MotoBackgroundTasks.ACTION_STOP_SENSORS;
+
 public class DashBoardActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String LOG_TAG=DashBoardActivity.class.getSimpleName();
@@ -60,6 +68,11 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
     private GoogleSignInClient mGoogleSignInClient;
     private FusedLocationProviderClient fusedLocationClient;
     private Location mLocation;
+
+    private IntentFilter intentFilter;
+
+    MotoBackgroundService mService;
+    boolean mBound = false;
 
     @BindView(R.id.start)
     Button mStartButton;
@@ -73,6 +86,7 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
         setContentView(R.layout.activity_dash_board);
         ButterKnife.bind(this);
         mDb= AppDatabase.getsInstance(this);
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -97,18 +111,20 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                 @Override
                 public void onClick(View view) {
 
-                    if (state==false) {
-                        state=true;
-                        mStartButton.setText("Detener");
+                    if (mBound==true && !mService.getServiceState()) {
                         Intent intent = new Intent(DashBoardActivity.this, MotoBackgroundService.class);
                         intent.setAction(MotoBackgroundTasks.ACTION_SEND_SENSORS);
-                        startService(intent);
+                        mService.forceAction(intent);
+                        mStartButton.setText("Detener");
+                        mBound=true;
+
                     }else{
-                        state=false;
                         mStartButton.setText("Iniciar");
                         Intent intent = new Intent(DashBoardActivity.this, MotoBackgroundService.class);
                         intent.setAction(MotoBackgroundTasks.ACTION_STOP_SENSORS);
-                        startService(intent);
+                        mService.forceAction(intent);
+                        mService.stopSelf();
+
                     }
                 }
             });
@@ -118,6 +134,14 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
 
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to LocalService
+        Intent intent = new Intent(this, MotoBackgroundService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -132,6 +156,34 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_dashboard, menu);
         return true;
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(connection);
+        mBound = false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+        if (mService!=null) {
+            if (!mService.getServiceState()) {
+                mStartButton.setText("Detener");
+            } else {
+                mStartButton.setText("Iniciar");
+            }
+        }
+
 
     }
 
@@ -267,5 +319,39 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
         }
 
     }
+
+
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MotoBackgroundService.LocalBinder binder = (MotoBackgroundService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+
+            if (mService.getServiceState()) {
+                mStartButton.setText("Detener");
+            } else {
+                mStartButton.setText("Iniciar");
+            }
+
+            Intent intent= getIntent();
+            if(intent!=null && intent.hasExtra("extra")){
+                if (mService!=null){
+                    mService.setServiceState(false);
+                    mService.stopService();
+                    mStartButton.setText("Iniciar");
+                }
+            }
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 
 }
