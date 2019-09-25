@@ -89,24 +89,8 @@ public class FormAdapterViewPager extends FragmentPagerAdapter {
         FavoriteContactsUser favoriteContactsUser= new FavoriteContactsUser( PrefMang.getSession().getId(),contactsMotos);
         Gson gson= new Gson();
         String json= gson.toJson(favoriteContactsUser);
+        PrefMang.setContacts(favoriteContactsUser);
 
-        if(!contactsMotos.isEmpty()){
-            PrefMang.setContacts(favoriteContactsUser);
-            AppMotoRetrofitinstance.getAppMotoService().sendAlertToContacts(favoriteContactsUser).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    Toast.makeText(context, context.getText(R.string.registered_contacts_successfull), Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Toast.makeText(context, context.getText(R.string.registered_contacts_failed), Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        else{
-            //TODO logic for message indicating that you should add the contacts later.
-        }
         return true;
     }
 

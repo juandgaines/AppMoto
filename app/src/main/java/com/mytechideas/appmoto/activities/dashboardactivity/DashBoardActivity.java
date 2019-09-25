@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -201,41 +202,11 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                 intent.putExtra("mode","edition");
                 startActivity(intent);
                 return true;
-            case R.id.debug_db:
-                getDataFromDB();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void getDataFromDB() {
-
-        AppExecutors
-                .getsInstance()
-                .diskIO()
-                .execute(new Runnable() {
-                             @Override
-                             public void run() {
-                                 List<TripEntryWithAccAndGyro> x = mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
-                                 Gson gson= new Gson();
-                                 String json= gson.toJson(x);
-
-                                 AppMotoRetrofitinstance.getAppMotoService().registerTrip(x).enqueue(new Callback<Void>() {
-                                     @Override
-                                     public void onResponse(Call<Void> call, Response<Void> response) {
-                                         Toast.makeText(DashBoardActivity.this, "Viaje subido exitosamente", Toast.LENGTH_LONG).show();
-                                     }
-
-                                     @Override
-                                     public void onFailure(Call<Void> call, Throwable t) {
-                                         Toast.makeText(DashBoardActivity.this, "Algo fallo subiendo la informacion del viaje", Toast.LENGTH_LONG).show();
-                                     }
-                                 });
-                             }
-
-                         }
-                );
-    }
 
     private void sendLastLocation() {
         fusedLocationClient.getLastLocation()
@@ -255,6 +226,18 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
 
                                     Gson gson=new Gson();
                                     String json= gson.toJson(accidentReport);
+
+                                    AppMotoRetrofitinstance.getAppMotoService().sendAlertToContacts(accidentReport).enqueue(new Callback<Void>() {
+                                        @Override
+                                        public void onResponse(Call<Void> call, Response<Void> response) {
+                                            Toast.makeText(DashBoardActivity.this,"Accidente reportado",Toast.LENGTH_LONG);
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Void> call, Throwable t) {
+                                            Toast.makeText(DashBoardActivity.this,"No se pudo reportar emergencia. Intentalo de nuevo.",Toast.LENGTH_LONG);
+                                        }
+                                    });
 
                                     Uri gmmIntentUri = Uri.parse("geo:"+mLocation.getLatitude()+","+mLocation.getLongitude());
                                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);

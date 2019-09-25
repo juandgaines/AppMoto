@@ -32,7 +32,7 @@
     <string name="register_successfull">Registro exitoso</string>
     <string name="registered_contacts_successfull">Contactos registrados exitosamente!</string>
     <string name="registered_contacts_failed">Fallo en registro de contactos</string>
-    <string name="edit_profile">editar_contactos</string>
+    <string name="edit_profile">Editar perfil</string>
 
     <string-array name="blod_array">
         <item>Select</item>

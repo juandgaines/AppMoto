@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.mytechideas.appmoto.R;
+import com.mytechideas.appmoto.activities.dashboardactivity.DashBoardActivity;
 import com.mytechideas.appmoto.context.AppMotoContext;
 import com.mytechideas.appmoto.database.AppDatabase;
 import com.mytechideas.appmoto.database.daos.TripWithAccAndGyroDAO;
@@ -27,7 +28,10 @@ import com.mytechideas.appmoto.database.entities.TripEntry;
 import com.mytechideas.appmoto.database.entities.TripEntryWithAccAndGyro;
 import com.mytechideas.appmoto.database.executors.AppExecutors;
 import com.mytechideas.appmoto.models.AccAndGyro;
+import com.mytechideas.appmoto.models.AccidentReport;
+import com.mytechideas.appmoto.models.FavoriteContactsUser;
 import com.mytechideas.appmoto.models.LastLocationKnown;
+import com.mytechideas.appmoto.network.AppMotoRetrofitinstance;
 import com.mytechideas.appmoto.preferences.PrefMang;
 import com.mytechideas.appmoto.utils.NotificationUtils;
 
@@ -45,6 +49,9 @@ import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MotoBackgroundTasks {
     public static final String LOG_TAG=MotoBackgroundTasks.class.getSimpleName();
@@ -107,12 +114,27 @@ public class MotoBackgroundTasks {
                     List<TripEntryWithAccAndGyro> mOverAllData= mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
                     observablesSensors.clear();
                     NotificationUtils.closeNotification(context);
+
+                    List<TripEntryWithAccAndGyro> x = mDb.tripWithAccAndGyroDAO().getAllDataOfTrip();
+
+                    AppMotoRetrofitinstance.getAppMotoService().registerTrip(x).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            Log.d("Service", "Viaje subido exitosamente");
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Log.d("Service", "Algo fallo subiendo la informacion del viaje");
+                        }
+                    });
+                    mDb.tripsDao().deleteAllTrips();
+                    mDb.accDAO().deleteAllAccSamples();
+                    mDb.gyroDAO().deleteAllGyroSamples();
                 }
             });
 
-            //mDb.tripsDao().deleteAllTrips();
-            //mDb.accDAO().deleteAllAccSamples();
-            //mDb.gyroDAO().deleteAllGyroSamples();
+
         }
     }
 
@@ -201,8 +223,20 @@ public class MotoBackgroundTasks {
                                                         PrefMang.getSession().getId(),sampleid
                                                         ,mLocation.getLatitude(),mLocation.getLongitude());
 
-                                                Gson gson=new Gson();
-                                                String json= gson.toJson(lastLocationKnown);
+                                                FavoriteContactsUser contactForEmergency = PrefMang.getContacts();
+                                                AccidentReport accidentReport = new AccidentReport(lastLocationKnown,contactForEmergency);
+
+                                                AppMotoRetrofitinstance.getAppMotoService().sendAlertToContacts(accidentReport).enqueue(new Callback<Void>() {
+                                                    @Override
+                                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                                        //Toast.makeText(DashBoardActivity.this,"Accidente reportado",Toast.LENGTH_LONG);
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<Void> call, Throwable t) {
+                                                        //Toast.makeText(DashBoardActivity.this,"No se pudo reportar emergencia. Intentalo de nuevo.",Toast.LENGTH_LONG);
+                                                    }
+                                                });
                                             }
                                         }
                                     });
