@@ -33,6 +33,10 @@
     <string name="registered_contacts_successfull">Contactos registrados exitosamente!</string>
     <string name="registered_contacts_failed">Fallo en registro de contactos</string>
     <string name="edit_profile">Editar perfil</string>
+    <string name="notification_shared_title">Viaje almacenado!</string>
+    <string name="notification_shared_content">La información del viaje ha sido guardada exitosamente.</string>
+    <string name="notification_shared_fail_title">Upss....</string>
+    <string name="notification_shared_fail_content">No se pudo almacenar los datos del viaje.</string>
 
     <string-array name="blod_array">
         <item>Select</item>

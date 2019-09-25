@@ -120,12 +120,13 @@ public class MotoBackgroundTasks {
                     AppMotoRetrofitinstance.getAppMotoService().registerTrip(x).enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
-                            Log.d("Service", "Viaje subido exitosamente");
+                            NotificationUtils.createNotificationTripUploaded(context);
                         }
 
                         @Override
                         public void onFailure(Call<Void> call, Throwable t) {
-                            Log.d("Service", "Algo fallo subiendo la informacion del viaje");
+                            NotificationUtils.createNotificationTripFailUploaded(context);
+
                         }
                     });
                     mDb.tripsDao().deleteAllTrips();

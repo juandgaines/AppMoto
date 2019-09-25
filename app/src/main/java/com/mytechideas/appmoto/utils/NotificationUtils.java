@@ -95,6 +95,68 @@ public class NotificationUtils {
         notificationManager.notify(SENDING_DATA_NOTIFICATION_ID, notificationBuilder.build());
     }
 
+    public static void createNotificationTripUploaded(Context context){
+
+        NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(SENDING_DATA_NOTIFICATION_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_sending_name), NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        NotificationCompat.Builder notificationBuilder=new NotificationCompat.Builder(context,
+                SENDING_DATA_NOTIFICATION_CHANNEL_ID)
+                .setColor(ContextCompat.getColor(context,R.color.colorPrimary))
+                .setSmallIcon(R.mipmap.ic_motorcycle_black_18dp)
+                .setLargeIcon(largeIcon(context))
+                .setContentTitle(context.getString(R.string.notification_shared_title))
+                .setContentText(context.getString(R.string.notification_shared_content))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                        context.getString(R.string.notification_shared_content)
+                ))
+                .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setContentIntent(contentintent(context));
+
+        if(Build.VERSION.SDK_INT>=  Build.VERSION_CODES.JELLY_BEAN
+                && Build.VERSION.SDK_INT<Build.VERSION_CODES.O){
+            notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
+
+        notificationManager.notify(SENDING_DATA_NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    public static void createNotificationTripFailUploaded(Context context){
+
+        NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(SENDING_DATA_NOTIFICATION_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_sending_name), NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        NotificationCompat.Builder notificationBuilder=new NotificationCompat.Builder(context,
+                SENDING_DATA_NOTIFICATION_CHANNEL_ID)
+                .setColor(ContextCompat.getColor(context,R.color.colorPrimary))
+                .setSmallIcon(R.mipmap.ic_motorcycle_black_18dp)
+                .setLargeIcon(largeIcon(context))
+                .setContentTitle(context.getString(R.string.notification_shared_fail_title))
+                .setContentText(context.getString(R.string.notification_shared_fail_content))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                        context.getString(R.string.notification_shared_fail_content)
+                ))
+                .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setContentIntent(contentintent(context));
+
+        if(Build.VERSION.SDK_INT>=  Build.VERSION_CODES.JELLY_BEAN
+                && Build.VERSION.SDK_INT<Build.VERSION_CODES.O){
+            notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
+
+        notificationManager.notify(SENDING_DATA_NOTIFICATION_ID, notificationBuilder.build());
+    }
+
     public static  void closeNotification(Context context){
         NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(SENDING_DATA_NOTIFICATION_ID);
