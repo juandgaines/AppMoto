@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
@@ -84,8 +85,7 @@ public class NotificationUtils {
                         context.getString(R.string.notification_accident_content)
                 ))
                 .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentIntent(contentintent(context))
-                .addAction(stopAction(context));
+                .setContentIntent(contentintent(context));
 
         if(Build.VERSION.SDK_INT>=  Build.VERSION_CODES.JELLY_BEAN
                 && Build.VERSION.SDK_INT<Build.VERSION_CODES.O){
@@ -157,6 +157,36 @@ public class NotificationUtils {
         notificationManager.notify(SENDING_DATA_NOTIFICATION_ID, notificationBuilder.build());
     }
 
+    public static void createNotificationMotoAccidentFailed(Context context) {
+        NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(SENDING_DATA_NOTIFICATION_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_sending_name), NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        NotificationCompat.Builder notificationBuilder=new NotificationCompat.Builder(context,
+                SENDING_DATA_NOTIFICATION_CHANNEL_ID)
+                .setColor(ContextCompat.getColor(context,R.color.colorPrimary))
+                .setSmallIcon(R.mipmap.ic_motorcycle_black_18dp)
+                .setLargeIcon(largeIcon(context))
+                .setContentTitle(context.getString(R.string.notification_report_fail_title))
+                .setContentText(context.getString(R.string.notification_report_fail_content))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                        context.getString(R.string.notification_report_fail_content)
+                ))
+                .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setContentIntent(contentintent(context));
+
+        if(Build.VERSION.SDK_INT>=  Build.VERSION_CODES.JELLY_BEAN
+                && Build.VERSION.SDK_INT<Build.VERSION_CODES.O){
+            notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
+
+        notificationManager.notify(SENDING_DATA_NOTIFICATION_ID, notificationBuilder.build());
+    }
+
     public static  void closeNotification(Context context){
         NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(SENDING_DATA_NOTIFICATION_ID);
@@ -190,7 +220,6 @@ public class NotificationUtils {
                 stopSensorSharing,
                 PendingIntent.FLAG_UPDATE_CURRENT);*/
 
-
         Intent resultIntent =new Intent(context,DashBoardActivity.class);
         resultIntent.putExtra("extra",ACTION_STOP_SHARING);
 
@@ -206,5 +235,6 @@ public class NotificationUtils {
 
         return stopSharingAction;
     }
+
 
 }

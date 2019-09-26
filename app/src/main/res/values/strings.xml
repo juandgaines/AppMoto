@@ -23,7 +23,7 @@
     <string name="notification_sending_body">Prueba contenido</string>
     <string name="debug_data">Debug</string>
     <string name="notification_accident_title">Accidente detectado!</string>
-    <string name="notification_accident_content">Reportando accidente a tus contactos. Se enviara ayuda lo m\'as pronto posible.</string>
+    <string name="notification_accident_content">Reportando accidente a tus contactos y/o plataforma. Se enviará ayuda lo más pronto posible.</string>
     <string name="marca">Marca</string>
     <string name="reference">Referencia</string>
     <string name="model">Modelo</string>
@@ -37,6 +37,8 @@
     <string name="notification_shared_content">La información del viaje ha sido guardada exitosamente.</string>
     <string name="notification_shared_fail_title">Upss....</string>
     <string name="notification_shared_fail_content">No se pudo almacenar los datos del viaje.</string>
+    <string name="notification_report_fail_title">Ups! No se pudo realizar el reporte</string>
+    <string name="notification_report_fail_content">Intenta reportarlo manualmente desde la aplicación.</string>
 
     <string-array name="blod_array">
         <item>Select</item>

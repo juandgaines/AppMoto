@@ -50,6 +50,7 @@ import com.mytechideas.appmoto.preferences.PrefMang;
 import com.mytechideas.appmoto.R;
 import com.mytechideas.appmoto.services.MotoBackgroundService;
 import com.mytechideas.appmoto.services.MotoBackgroundTasks;
+import com.mytechideas.appmoto.utils.NotificationUtils;
 
 import java.util.List;
 
@@ -190,20 +191,27 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.sign_out:
-                signOut();
-                return true;
-            case R.id.send_alert:
-                sendLastLocation();
-                return true;
-            case R.id.edit_data:
-                Intent intent= new Intent(this, FormActivity.class);
-                intent.putExtra("mode","edition");
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+
+        if(!mService.getServiceState()) {
+            switch (item.getItemId()) {
+                case R.id.sign_out:
+                    signOut();
+                    return true;
+                case R.id.send_alert:
+                    sendLastLocation();
+                    return true;
+                case R.id.edit_data:
+                    Intent intent = new Intent(this, FormActivity.class);
+                    intent.putExtra("mode", "edition");
+                    startActivity(intent);
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        }
+        else{
+            Toast.makeText(this,"Detenga el viaje antes de acceder al menu.",Toast.LENGTH_LONG).show();
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -230,14 +238,15 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
                                     AppMotoRetrofitinstance.getAppMotoService().sendAlertToContacts(accidentReport).enqueue(new Callback<Void>() {
                                         @Override
                                         public void onResponse(Call<Void> call, Response<Void> response) {
-                                            Toast.makeText(DashBoardActivity.this,"Accidente reportado",Toast.LENGTH_LONG);
+                                            NotificationUtils.createNotificationMotoAccident(DashBoardActivity.this);
                                         }
 
                                         @Override
                                         public void onFailure(Call<Void> call, Throwable t) {
-                                            Toast.makeText(DashBoardActivity.this,"No se pudo reportar emergencia. Intentalo de nuevo.",Toast.LENGTH_LONG);
+                                            NotificationUtils.createNotificationMotoAccidentFailed(DashBoardActivity.this);
                                         }
                                     });
+
 
                                     Uri gmmIntentUri = Uri.parse("geo:"+mLocation.getLatitude()+","+mLocation.getLongitude());
                                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
