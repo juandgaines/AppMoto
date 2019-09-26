@@ -106,7 +106,7 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
 
             if (PrefMang.getIsFirstTimeApp()) {
                 Toast.makeText(this, "FirstTimeOnApp", Toast.LENGTH_LONG).show();
-                //PrefMang.setIsFirstTimeApp(false);
+                PrefMang.setIsFirstTimeApp(false);
             }
 
             mStartButton.setOnClickListener(new View.OnClickListener() {
@@ -297,7 +297,7 @@ public class DashBoardActivity extends AppCompatActivity implements SharedPrefer
 
                     if (PrefMang.getIsFirstTimeApp()){
                         Toast.makeText(this,"FirstTimeOnApp",Toast.LENGTH_LONG).show();
-                        //PrefMang.setIsFirstTimeApp(false);
+                        PrefMang.setIsFirstTimeApp(false);
                     }
 
 
